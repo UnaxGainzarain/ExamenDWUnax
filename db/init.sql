@@ -1,0 +1,53 @@
+-- Base de datos objetivo: Gym_API_Bd
+
+USE Gym_API_Bd;
+
+-- LIMPIEZA PREVIA 
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS booking;
+DROP TABLE IF EXISTS song;
+DROP TABLE IF EXISTS activity;
+DROP TABLE IF EXISTS client;
+DROP TABLE IF EXISTS doctrine_migration_versions;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- 3. CREACIÓN DE TABLAS (DDL)
+
+CREATE TABLE client (
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    PRIMARY KEY(id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+
+CREATE TABLE activity (
+    id INT AUTO_INCREMENT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    date_start DATETIME NOT NULL,
+    date_end DATETIME NOT NULL,
+    max_participants INT NOT NULL,
+    PRIMARY KEY(id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+
+CREATE TABLE song (
+    id INT AUTO_INCREMENT NOT NULL,
+    activity_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    duration_seconds INT NOT NULL,
+    INDEX IDX_33EDEEA181C06096 (activity_id),
+    PRIMARY KEY(id),
+    CONSTRAINT FK_33EDEEA181C06096 FOREIGN KEY (activity_id) REFERENCES activity (id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+
+CREATE TABLE booking (
+    id INT AUTO_INCREMENT NOT NULL,
+    activity_id INT NOT NULL,
+    client_id INT NOT NULL,
+    INDEX IDX_E00CEDDE81C06096 (activity_id),
+    INDEX IDX_E00CEDDE19EB6921 (client_id),
+    PRIMARY KEY(id),
+    CONSTRAINT FK_E00CEDDE81C06096 FOREIGN KEY (activity_id) REFERENCES activity (id),
+    CONSTRAINT FK_E00CEDDE19EB6921 FOREIGN KEY (client_id) REFERENCES client (id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+
