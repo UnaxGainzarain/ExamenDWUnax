@@ -1,0 +1,320 @@
+openapi: 3.0.3
+info:
+  title: 4V GYM Clients- OpenAPI 1.0
+  description: |-
+    API Specification for 4V GYM.
+    The purpose is to list and engage of clients in activities of the GYM.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: miguel_goyena@cuatrovientos.org
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+tags:
+  - name: clients
+    description: Everything about the clients of the GYM.
+  - name: activities
+    description: Everything about the activities of GYM.
+  - name: bookings
+    description: Clients of the GYM can book the activities.
+paths:                
+  /activities:
+    get:
+      tags:
+        - activities
+      summary: Find the available activities
+      operationId: findActivities
+      parameters:
+        - name: onlyfree
+          in: query
+          description: To define if we want all the activities or only the activities with free places, by default is true
+          required: false
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          description: The type of activity
+          required: false
+          schema:
+            type: string
+            default: BodyPump
+            enum:
+              - BodyPump
+              - Spinning
+              - Core
+        - name: page
+          in: query
+          description: Used to say the page yopu want
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          description: Used to define the limit of activities to give for every page
+          required: false
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          description: The sort criteria
+          required: false
+          schema:
+            type: string
+            default: date
+            enum:
+              - date
+        - name: order
+          in: query
+          description: The sort order
+          required: false
+          schema:
+            type: string
+            default: desc
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityList'          
+        '400':
+          description: Any problem in the Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /clients/{id}:
+    get:
+      tags:
+        - clients
+      summary: Find the information of a user, included the current booked activities and the statistics of the GYM
+      operationId: userInformation
+      parameters:
+        - name: with_statistics
+          in: query
+          description: With information of past activities
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: with_bookings
+          in: query
+          description: With information of current activities booked
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'          
+        '400':
+          description: Any problem in the Server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /bookings:
+    post:
+      tags:
+        - bookings
+      summary: Book an activity by a user
+      description: Book an activity by a user
+      operationId: bookActivityByUser
+      requestBody:
+        description: Create a new Activity in the GYM
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingNew'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'  
+        '400':
+          description: Any Error like validations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Song:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: La morocha
+        duration_seconds:
+          type: integer
+          example: 245
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 21
+        description:
+          type: string
+          example: The name is mandatory
+    ActivityList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+        meta:
+          items:
+            $ref: '#/components/schemas/Metadata'
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        max_participants:
+          type: integer
+          format: int64
+          example: 25
+        clients_signed:
+          type: integer
+          format: int64
+          example: 10
+        type:
+          type: string
+          default: BodyPump
+          enum:
+            - BodyPump
+            - Spinning
+            - Core
+        play_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Song'
+        date_start:
+          type: string
+          format: date-time
+        date_end:
+          type: string
+          format: date-time
+    Metadata:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          example: 11
+        limit:
+          type: integer
+          format: int64
+          example: 10
+        total-items:
+          type: integer
+          format: int64
+          example: 100
+    BookingNew:
+      type: object
+      properties:
+        activity_id:
+          type: integer
+          format: int64
+          example: 2
+        client_id:
+          type: integer
+          format: int64
+          example: 12
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        type:
+          type: string
+          default: standard
+          enum:
+            - standard
+            - premium
+        name:
+          type: string
+          example: Miguel Goyena
+        email:
+          type: string
+          example: miguel_goyena@cuatrovientos.org
+        activities_booked:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+        activity_statistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatisticsByYear'
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        activity:
+          $ref: '#/components/schemas/Activity'
+        client_id:
+          type: integer
+          format: int64
+          example: 10
+    StatisticsByYear:
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int64
+          example: 2025
+        statistics_by_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatisticsByType'
+    StatisticsByType:
+      type: object
+      properties:
+        type:
+          type: string
+          default: BodyPump
+          enum:
+            - BodyPump
+            - Spinning
+            - Core
+        statistics:
+          items:
+            $ref: '#/components/schemas/Statistics'
+    Statistics:
+      type: object
+      properties:
+        num_activities:
+          type: string
+          format: int64
+          example: 25
+        num_minutes:
+          type: string
+          format: int64
+          example: 8250
