@@ -10,7 +10,6 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 
 class ActivityController extends AbstractController
 {
-    // Inyectamos el repositorio en el constructor como vimos en clase (Servicios/DI)
     public function __construct(private ActivityRepository $activityRepository)
     {}
 
@@ -25,27 +24,24 @@ class ActivityController extends AbstractController
         #[MapQueryParameter] bool $onlyfree = true // Por defecto true según enunciado 
     ): JsonResponse
     {
-        // 1. Validaciones manuales (Clean Coding: Fail Fast)
-        // Validar orden 
         if (!in_array(strtolower($order), ['asc', 'desc'])) {
              return $this->json(['code' => 400, 'description' => 'Order must be asc or desc'], 400);
         }
         
-        // Validar tipo si viene informado 
     
         $validTypes = ['BodyPump', 'Spinning', 'Core'];
         if ($type && !in_array($type, $validTypes)) {
             return $this->json(['code' => 400, 'description' => 'Invalid activity type'], 400);
         }
 
-        // 2. Llamada a BBDD usando el repositorio (Punto 1 y 3)
+        
         // Usamos el método findByFilters creado en el paso anterior
         $activities = $this->activityRepository->findByFilters($type, $onlyfree, $page, $page_size, $sort, $order);
         
         // Recuperamos el total para la paginación
         $totalItems = $this->activityRepository->countByFilters($type, $onlyfree);
 
-        // 3. Mapeo manual de la respuesta para cumplir con el YAML (ActivityList)
+        
         // Convertimos las Entidades a un array asociativo limpio
         $data = [];
         foreach ($activities as $activity) {
@@ -60,7 +56,6 @@ class ActivityController extends AbstractController
                 ];
             }
 
-            // Calculamos clients_signed (Punto 3) contando la colección de reservas 
             $clientsSigned = $activity->getBookings()->count();
 
             $data[] = [
@@ -74,7 +69,7 @@ class ActivityController extends AbstractController
             ];
         }
 
-        // 4. Construcción de la respuesta JSON final con metadatos 
+        // Respuesta final en json con metadatos
         $response = [
             'data' => $data,
             'meta' => [

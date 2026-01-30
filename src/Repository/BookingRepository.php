@@ -6,9 +6,7 @@ use App\Entity\Booking;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Booking>
- */
+
 class BookingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -25,7 +23,7 @@ class BookingRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('b')
             ->select('count(b.id)')
-            ->join('b.activity', 'a') // Join con Activity para ver las fechas
+            ->join('b.activity', 'a') 
             ->where('b.client = :clientId')
             ->andWhere('a.dateStart BETWEEN :start AND :end')
             ->setParameter('clientId', $clientId)

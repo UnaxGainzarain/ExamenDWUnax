@@ -33,10 +33,7 @@ class ClientController extends AbstractController
             'type' => $client->getType(),
             'name' => $client->getName(),
             'email' => $client->getEmail(),
-            // Inicializamos como arrays vacíos o nulos según prefieras, 
-            // el YAML dice array, pero si no se piden, mejor no enviarlos o enviarlos vacíos.
-            // Según lógica REST, si no se piden, a menudo se omiten, 
-            // pero para seguir estructura YAML estricta podemos dejarlos vacíos.
+            
         ];
 
         // 3. Lógica condicional: Reservas (with_bookings)

@@ -22,7 +22,7 @@ class Client
     private ?string $email = null;
 
     #[ORM\Column(length: 20)]
-    private ?string $type = 'standard'; // 'standard' o 'premium'
+    private ?string $type = 'standard'; 
 
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
     private Collection $bookings;
@@ -32,7 +32,6 @@ class Client
         $this->bookings = new ArrayCollection();
     }
 
-    // Getters y Setters básicos...
     public function getId(): ?int { return $this->id; }
     public function getName(): ?string { return $this->name; }
     public function setName(string $name): static { $this->name = $name; return $this; }

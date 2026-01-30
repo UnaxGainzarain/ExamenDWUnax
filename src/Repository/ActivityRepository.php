@@ -6,9 +6,7 @@ use App\Entity\Activity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Activity>
- */
+
 class ActivityRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -35,7 +33,7 @@ class ActivityRepository extends ServiceEntityRepository
                ->having('COUNT(b.id) < a.maxParticipants');
         }
 
-        // 3. Ordenación (Punto 1)
+      
         // El enunciado dice 'date', mapeamos a 'dateStart'
         $sortField = 'a.dateStart'; 
         if ($sort === 'date') {
@@ -44,7 +42,7 @@ class ActivityRepository extends ServiceEntityRepository
         
         $qb->orderBy($sortField, $order);
 
-        // 4. Paginación (Punto 1)
+       
         $qb->setFirstResult(($page - 1) * $pageSize)
            ->setMaxResults($pageSize);
 
@@ -66,9 +64,7 @@ class ActivityRepository extends ServiceEntityRepository
                ->groupBy('a.id')
                ->having('COUNT(b.id) < a.maxParticipants');
              
-             // Nota: count con having en doctrine a veces requiere lógica extra, 
-             // pero para simplificar en examen devolvemos el count simple o filtered.
-             // Si da problemas, se puede recuperar result y hacer count($result).
+             
              return count($this->findByFilters($type, $onlyFree, 1, 10000, 'date', 'asc')); 
         }
 

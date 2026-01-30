@@ -22,7 +22,6 @@ class Song
     #[ORM\JoinColumn(nullable: false)]
     private ?Activity $activity = null;
 
-    // Getters y Setters...
     public function getId(): ?int { return $this->id; }
     public function getName(): ?string { return $this->name; }
     public function setName(string $name): static { $this->name = $name; return $this; }

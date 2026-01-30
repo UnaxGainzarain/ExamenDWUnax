@@ -17,7 +17,7 @@ class Activity
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $type = null; // 'BodyPump', 'Spinning', 'Core'
+    private ?string $type = null; 
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateStart = null;
@@ -42,7 +42,6 @@ class Activity
         $this->bookings = new ArrayCollection();
     }
 
-    // Getters y Setters...
     public function getId(): ?int { return $this->id; }
     public function getType(): ?string { return $this->type; }
     public function setType(string $type): static { $this->type = $type; return $this; }

@@ -20,7 +20,6 @@ class Booking
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
-    // Getters y Setters...
     public function getId(): ?int { return $this->id; }
     public function getActivity(): ?Activity { return $this->activity; }
     public function setActivity(?Activity $activity): static { $this->activity = $activity; return $this; }
